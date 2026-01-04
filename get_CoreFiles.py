@@ -2,16 +2,10 @@ import os
 
 Import("env")
 
-CORESOURCE = "https://github.com/MobiFlight/MobiFlight-FirmwareSource"
+# CORESOURCE = "https://github.com/MobiFlight/MobiFlight-FirmwareSource"
+CORESOURCE = "https://github.com/elral/MobiFlight-FirmwareSource"
 CORESOURCE_DIR = env.subst("$PROJECT_DIR/src")
 CORESOURCE_TAG = env.GetProjectOption("custom_core_firmware_version")
-
-# !! CAUTION !!
-# Delete the next lines once the ESP32 branch from elral is merged into the the MF main branch and is released
-CORESOURCE = "https://github.com/elral/MobiFlight-FirmwareSource"
-CORESOURCE_TAG = "ESP32_support"#
-# !! CAUTION !!
-
 print("Compiling for Core Version: " + CORESOURCE_TAG)
 
 if not os.path.exists(CORESOURCE_DIR):
