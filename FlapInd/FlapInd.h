@@ -2,17 +2,19 @@
 
 #include "Arduino.h"
 
-class MyCustomClass
+class FlapInd
 {
 public:
-    MyCustomClass(uint8_t Pin1, uint8_t Pin2);
+    FlapInd();
     void begin();
-    void attach(uint16_t Pin3, char *init);
+    void attach();
     void detach();
     void set(int16_t messageID, char *setPoint);
     void update();
-
+    void draw();
+    
 private:
     bool    _initialised;
-    uint8_t _pin1, _pin2, _pin3;
+    float   _flapHandlePct = 0.20;
+    float   _flapIndicatorPct = 0.40;
 };

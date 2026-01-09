@@ -1,35 +1,49 @@
-#include "MyCustomClass.h"
+#include "FlapInd.h"
 #include "allocateMem.h"
 #include "commandmessenger.h"
+#include "TFT_eSPI.h"
+#include "Images\background.h"
+#include "Images\handle.h"
 
 /* **********************************************************************************
     This is just the basic code to set up your custom device.
     Change/add your code as needed.
 ********************************************************************************** */
 
-MyCustomClass::MyCustomClass(uint8_t Pin1, uint8_t Pin2)
+TFT_eSPI tft = TFT_eSPI();
+
+TFT_eSprite backgroundSprite = TFT_eSprite(&tft);
+TFT_eSprite handleSprite = TFT_eSprite(&backgroundSprite);
+
+FlapInd::FlapInd()
 {
-    _pin1 = Pin1;
-    _pin2 = Pin2;
 }
 
-void MyCustomClass::begin()
+void FlapInd::begin()
+{
+    tft.init();
+    tft.setRotation(0);
+
+    backgroundSprite.createSprite(tft.width(), tft.height());
+
+    handleSprite.createSprite(HANDLE_IMG_WIDTH, HANDLE_IMG_HEIGHT);
+    handleSprite.pushImage(0, 0, HANDLE_IMG_WIDTH, HANDLE_IMG_HEIGHT, HANDLE_IMG_DATA);
+    
+    draw();
+}
+
+void FlapInd::attach()
 {
 }
 
-void MyCustomClass::attach(uint16_t Pin3, char *init)
-{
-    _pin3 = Pin3;
-}
-
-void MyCustomClass::detach()
+void FlapInd::detach()
 {
     if (!_initialised)
         return;
     _initialised = false;
 }
 
-void MyCustomClass::set(int16_t messageID, char *setPoint)
+void FlapInd::set(int16_t messageID, char *setPoint)
 {
     /* **********************************************************************************
         Each messageID has it's own value
@@ -51,21 +65,34 @@ void MyCustomClass::set(int16_t messageID, char *setPoint)
     case -2:
         // tbd., get's called when PowerSavingMode is entered
     case 0:
-        output = (uint16_t)data;
-        data   = output;
+        _flapIndicatorPct = atof(setPoint);
+        draw();
         break;
     case 1:
-        /* code */
-        break;
-    case 2:
-        /* code */
+        _flapHandlePct = atof(setPoint);
+        draw();
         break;
     default:
         break;
     }
 }
 
-void MyCustomClass::update()
+void FlapInd::draw()
+{
+    backgroundSprite.fillSprite(TFT_BLACK);
+    backgroundSprite.pushImage(0, 0, BACKGROUND_IMG_WIDTH, BACKGROUND_IMG_HEIGHT, BACKGROUND_IMG_DATA);
+
+//    tft.fillRect(BACKGROUND_IMG_WIDTH, 0, 40, tft.height(), TFT_BLACK);
+    backgroundSprite.fillCircle(BACKGROUND_IMG_WIDTH + 20, (_flapIndicatorPct * (tft.height() - 40))  + 20, 15, TFT_RED);
+
+    handleSprite.pushToSprite(&backgroundSprite, 20, (_flapHandlePct * (tft.height() - 40)), TFT_WHITE);  
+
+    backgroundSprite.pushSprite(0,0);
+}
+
+
+
+void FlapInd::update()
 {
     // Do something which is required regulary
 }

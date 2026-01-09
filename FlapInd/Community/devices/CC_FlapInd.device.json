@@ -1,0 +1,28 @@
+{
+    "$schema": "./mfdevice.schema.json",
+    "Info": {
+      "Label": "FlapIndDisp",
+      "Type": "FlapInd",
+      "Author": "CC",
+      "URL": "https://github.com/ccrawford",
+      "Version" : "1.0.0"
+    },
+    "Config": {
+      "Pins": [
+      ],
+      "isI2C": false
+    },
+    "MessageTypes": [
+      {
+        "id": 0,
+        "label": "Flap Indicator Position as Percent over 100: 0.0 to 1.0",
+        "description": "$ is (A:TRAILING EDGE FLAPS LEFT PERCENT, percent over 100)"
+      },
+      {
+        "id": 1,
+        "label": "Flap Handle Position as Percent over 100: 0.0 to 1.0",
+        "description": "$ is (A:FLAPS HANDLE PERCENT, percent over 100)"
+      }
+    ]
+  }
+  
