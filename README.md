@@ -103,9 +103,35 @@ Devices are the base MobiFlight connectable element. (Buttons, encoders, 7-segme
 
 ## Coding tips
 * Add any necessary libraries to lib_deps in the top [env\_[device]] section of your [device]\_plaformio.ini files.
-* There are two main ways to 
+* There are two main ways to have your device refresh/update. You can either update it when the data changes or timed refresh every n milliseconds.
+
+To update when data changes, put the appropriate update code/method call in the set() method of your main class (the class in the [device].cpp file). E.g. for a simple altimeter, you may only want to refresh the screen when the altitude changes. In the set() method's switch() statement add a call to refresh the screen in response to a new altitude. 
+
+However for a large gauge (e.g. an engine monitor) where several values are changing every second it would be better to just refresh the whole screen every 25ms with the then current data. So, you'd update class variables in the set() method and call the screen update in the update() method. By default, the update() method is not active. You must uncomment the -DMF_CUSTOMDEVICE_HAS_UPDATE line in the [device]\_platformio.ini file and set a -DMF_CUSTOMDEVICE_POLL_MS value. Note that if that value is set very low and your update code is extensive other MF actions may not have a chance to run and you risk losing encoder inputs or button presses.
 * If you need the memory, you can disable device types you won't need/support in the build_unflags section of your [device]\_platformio.ini
-* 
+* Getting your screen to get *any* output on it is a major achievement!
+* Make sure you confirm that all the variables you want to use are available before you go to far. Nothing is more frustrating than building the perfect screen to show a value that just isn't available.
+
+## Configuration
+End users can add your custom device to their configuration the usual way: Flash the board with your firmware, add devices--including your custom device--and incorporate into their cockpit. If you are shipping a pre-wired instrument and don't want your end users making a mistake in configuration you have a few options. 
+1. Hard code in your code. If your instrument only consists of your custom device, just remove the pin definitions, hard code them in your class, and remove the ability to add new devices in the boards.json ModuleLimits section.
+2. Ship an .mfmc configuration file the user can use with their board and the MF Connector client.
+3. Use the HAS_CONFIG_IN_FLASH feature. This is if you have both a custom device *and* base MobiFlight devices in your hardware. E.g. a screen with a rotary encoder and a pushbutton.
+To include your board config in flash:
+* Uncomment the ```-DHAS_CONFIG_IN_FLASH``` line in the [device]\_platformio.ini file
+* Edit the [device]/MFCustomDevicesConfig.h file to include your complete configuration, one device per line replacing the example configuration in the template file.
+* :star:The easy way to get your configuration strings is to configure your device using the MF Connector client, and then getting the necesary strings using the ```12;``` command from a serial terminal. This will give you something like: ```10,17.LC2Chrono.0|1|2|3|4|5..CC's LC2Chrono:1.6.modeBtn:14.11.7.8.9.10.2.Multiplexer:;``` From this, you would drop the leading '10,' (response type) and replace the vertical bars '|' with '.' and take out some of the extra delimiters. So the resulting file would be:
+```
+const char CustomDeviceConfig[] PROGMEM =
+{
+  "17.0.1.2.3.4.5.CC's LC2Chrono:"
+  "1.6.modeBtn:"
+  "14.11.7.8.9.10.2.Multiplexer:"
+}
+```
+
+
+* Otherwise, you can construct the strings by hand using the ids found in ./src/src/config.h with the appropriate number of arguments and the device name for each device. Arguments are separated by dots '.' and terminated with a colon ':'. The number of arguments varies by device type. E.g. an encoder is ```8.a_pin.b_pin.enc_type.name:```
 
 # Debugging/Testing
 * On a brand new project your custom code will NOT run until you add your new device to the board using the MF Connector. Obvious, but easy to forget.
@@ -114,7 +140,7 @@ Devices are the base MobiFlight connectable element. (Buttons, encoders, 7-segme
 * To send a message with id 3 with value 4.5 to your first added custom device, from a serial terminal enter: ```32,0,3,4.5;``` Note that it will not echo. Use a semi-colon, not an enter to terminate the command. Other useful comands are ```5;``` quick 'are you alive?' test. ```9;``` get info on board. ```12``` get board config string.
 * Be careful with Serial.printf() debugging. They can confuse the MF client. You can use them with serial debugging, but you will need to disable them before resuming testing with the MF client.
 * MF Client expects a certain response from your board when it boots. If you have long delays at startup or extraneous serial output this step may fail and your board will not be recognized.
-
+* Instead of using Serial.printf, you can use: ```cmdMessenger.sendCmd(kDebug, F("Unexpected error! Debug message"));``` and make sure to turn up logging level in the MF Client to "debug"
 
 # Further information
 
@@ -124,9 +150,6 @@ In early 2026, CACrawf recorded a six part series of screen share videos walking
 ## Discord discussion
 The MobiFlight Discord server has a channel devoted to showing off your Community devices and asking questions [here](https://discord.com/channels/608690978081210392/1202389947173052467)
 
-
-### Special message
-There are some special messages with their respective IDs defined:
 
 ### Overview how the json files are related
 ![image](https://github.com/MobiFlight/MobiFlight-Connector/assets/3263285/0123829b-27c1-49ad-96d2-30a751da6e25)
