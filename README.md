@@ -16,7 +16,7 @@ Clone the repository and open it in PlatformIO.
 * Open a Windows shell
 * cd to the parent directory for your project
 * run ```git clone https://github.com/MobiFlight/CommunityTemplate```
-* rename the new directory to something appropriate for your project
+* rename the new 'CommunityTemplate' directory to something appropriate for your project
 
 ## Renaming script to prepare the firmware
 * cd into your new directory
@@ -28,8 +28,9 @@ The renaming.py script will rename classes, folders, constants and files and a d
 
 ## Initial Build
 Now it's a good point to test everything you have set up. The existing firmware itself will do nothing, but you can confirm that the renaming script worked correctly and that your new community board is recognized by the MF Connector software.
-* From the your shell window you can start VS code with ```code .``` or Start VS Code from the Windows menu and open your project directory. 
-* Use the PlatformIO build icon at the bottom to compile. If you're new to PlatformIO, documentation is [here](https://docs.platformio.org/en/latest/integration/ide/pioide.html) The Check Mark compiles, while the right arrow compiles and uploads to your board. :star: Pro Tip: PIO will try to auto-detect the board. If you have more than one board connected, click on the Plug icon with the word "Auto" after it and choose the correct COM port from the drop down.
+* From the your shell window you can start VS code with ```code .``` or Start VS Code from the Windows menu and open your project directory.
+* It will take VS Code a minute or two to update the project and get PlatformIO started. 
+* Use the PlatformIO build icon (the checkmark) at the bottom to compile. If you're new to PlatformIO, documentation is [here](https://docs.platformio.org/en/latest/integration/ide/pioide.html) The checkmark compiles, while the right arrow compiles and uploads to your board. :star: Pro Tip: PIO will try to auto-detect the board. If you have more than one board connected, click on the Plug icon with the word "Auto" after it and choose the correct COM port from the drop down.
 * The first compile will take a while as it pulls in the core MF Firmware repository and installs necessary libraries. Subsequent builds will go much faster. 
 * Issues? Look at the compiler output. Possible issues could include spaces or special characters in the author or device name. Or missing libraries/repos. Try closing and reopening VS Code to and rebuild to re-pull libraries if first attempt failed.
 * :star:PRO Tip: You can speed up your builds by only building for your current testing board. In the bottom blue PlatformIO status bar, you should see folder-with-target icon followed by "Default ([device name])" Click on that and then select your current board configuation from the top drop-down menu. E.g. "env:[author]\_[device]\_[board]"
@@ -141,14 +142,15 @@ const char CustomDeviceConfig[] PROGMEM =
 * Be careful with Serial.printf() debugging. They can confuse the MF client. You can use them with serial debugging, but you will need to disable them before resuming testing with the MF client.
 * MF Client expects a certain response from your board when it boots. If you have long delays at startup or extraneous serial output this step may fail and your board will not be recognized.
 * Instead of using Serial.printf, you can use: ```cmdMessenger.sendCmd(kDebug, F("Unexpected error! Debug message"));``` and make sure to turn up logging level in the MF Client to "debug"
+* You don't need to build, copy the firmware file, upload from MF with each change. You can just build and upload from VS Code and then test from a serial terminal or from the MF client.
 
-# Further information
+# Going Further, additional information
 
 ## YouTube video series
 In early 2026, CACrawf recorded a six part series of screen share videos walking through these steps. The video playlist is [here](https://youtube.com/playlist?list=PLs8cKRa3_buI8JBxz_b9rZXPu8PL7GuUh&si=TwfioTsuSwvoiGhU)
 
 ## Discord discussion
-The MobiFlight Discord server has a channel devoted to showing off your Community devices and asking questions [here](https://discord.com/channels/608690978081210392/1202389947173052467)
+The MobiFlight Discord server has a channel dedicated to showing off your Community devices and asking questions [here](https://discord.com/channels/608690978081210392/1202389947173052467)
 
 
 ### Overview how the json files are related
