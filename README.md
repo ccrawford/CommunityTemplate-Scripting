@@ -104,15 +104,21 @@ Devices are the base MobiFlight connectable element. (Buttons, encoders, 7-segme
 
 ## Coding tips
 * The vast majority of your code will go into the [device].cpp and [device].h files.
-* You will put setup code in the begin() method (similar to the "setup()" function in arduino). You react to changes in values from the sim (via the MobiFlight Connector) in the set() method. You perform periodic updates, if necessary, in the update() method (similar to the "loop()" function in arduino). You can add other methods and class variables as needed in the .h file and implement them in the .cpp file.
+* In your [device].cpp file you will put setup code in the begin() method (similar to the "setup()" function in arduino). You react to changes in values from the sim (via the MobiFlight Connector) in the set() method. You perform periodic updates, if necessary, in the update() method (similar to the "loop()" function in arduino). You can add other methods and class variables as needed in the .h file and implement them in the .cpp file.
+* In other words, you can organize your code into:
+  * Setup steps: Configuring pins, displays, variables (the "begin()" class method)
+  * Process data sent from MobiFlight (the switch statement in the "set()" class method)
+  * Update your display with the new data (the "update()" class method)
 * There are two main ways to have your device refresh/update. You can either update it when the data changes or timed refresh every n milliseconds.
 
 To update when data changes, put the appropriate update code/method call in the set() method of your main class (the class in the [device].cpp file). E.g. for a simple altimeter, you may only want to refresh the screen when the altitude changes. In the set() method's switch() statement add a call to refresh the screen in response to a new altitude. 
 
 However for a large gauge (e.g. an engine monitor) where several values are changing every second it would be better to just refresh the whole screen every 25ms with the then current data. So, you'd update class variables in the set() method and call the screen update in the update() method. By default, the update() method is not active. You must uncomment the -DMF_CUSTOMDEVICE_HAS_UPDATE line in the [device]\_platformio.ini file and set a -DMF_CUSTOMDEVICE_POLL_MS value. Note that if that value is set very low and your update code is extensive other MF actions may not have a chance to run and you risk losing encoder inputs or button presses.
 * Add any necessary libraries to lib_deps in the top [env\_[device]] section of your [device]\_plaformio.ini files.* If you need the memory, you can disable device types you won't need/support in the build_unflags section of your [device]\_platformio.ini
-* Getting your screen to get *any* output on it is a major achievement!
-* Make sure you confirm that all the variables you want to use are available before you go to far. Nothing is more frustrating than building the perfect screen to show a value that just isn't available.
+* In the set() method you are passed two variables, the id of the variable being set (corresponding to the value in the device.json file) and a string with the value. You will decide how that string should be transformed into a floating point or an integer or be left as a string.
+* In general, MobiFlight only sends values when they change. Some things never or rarely change (e.g. airplane parameters like Vs0), others change every cycle (airplane elevation to the millimeter). You can reduce load on your device by rounding values in mobiflight before sending them.
+* Getting your screen to get *any* output on it is a major achievement! Wiring screens and configuring graphics libraries can be tricky. 
+* Make sure you confirm that all the variables you want to use are available from your sim before you go too far. Nothing is more frustrating than building the perfect screen to show a value that isn't available.
 
 ## Configuration
 End users can add your custom device to their configuration the usual way: Flash the board with your firmware, add devices--including your custom device--and incorporate into their cockpit. If you are shipping a pre-wired instrument and don't want your end users making a mistake in configuration you have a few options. 
