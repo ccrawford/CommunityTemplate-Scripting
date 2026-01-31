@@ -154,7 +154,7 @@ const char CustomDeviceConfig[] PROGMEM =
 # Going Further, additional information
 
 ## YouTube video series
-In early 2026, CACrawf recorded a six part series of screen share videos walking through these steps. The video playlist is [here](https://youtube.com/playlist?list=PLs8cKRa3_buI8JBxz_b9rZXPu8PL7GuUh&si=TwfioTsuSwvoiGhU)
+In early 2026, CACrawf recorded a six part series of screen share videos walking through setup and creation of a simple custom display device. The video playlist is [here](https://youtube.com/playlist?list=PLs8cKRa3_buI8JBxz_b9rZXPu8PL7GuUh&si=TwfioTsuSwvoiGhU)
 
 ## Discord discussion
 The MobiFlight Discord server has a channel dedicated to showing off your Community devices and asking questions [here](https://discord.com/channels/608690978081210392/1202389947173052467)
