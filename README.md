@@ -138,8 +138,8 @@ const char CustomDeviceConfig[] PROGMEM =
 }
 ```
 
-
 * Otherwise, you can construct the strings by hand using the ids found in ./src/src/config.h with the appropriate number of arguments and the device name for each device. Arguments are separated by dots '.' and terminated with a colon ':'. The number of arguments varies by device type. E.g. an encoder is ```8.a_pin.b_pin.enc_type.name:```
+* :star: NOTE: There must NOT be a conventional MobiFlight configuration on the device. If your hardware has a MobiFlight uploaded profile and an configuration in flash, the uploaded profile takes precedence. You will have to wipe your device and reupload the firmware for your flash configuration to work. You can check the profile string MobiFlight sees by using the `12;` command in a serial terminal.
 
 # Debugging/Testing
 * Many people find it easier to work out details of screen configuration and core logic in a simple "hello world" project before moving it to the MF Community template.
