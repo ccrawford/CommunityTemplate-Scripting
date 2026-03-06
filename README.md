@@ -15,7 +15,7 @@ MobiFlight firmware development uses the following free/open source tools:
 *  [Python](https://www.python.org/downloads/) as a runtime for scripts (may already be installed as part of other installs)
 *  [Git client](https://git-scm.com/install/) (useful, but not strictly necessary)
   
-## **Create** a new reposority by using the [Community Template repository](https://github.com/MobiFlight/CommunityTemplate)
+## **Create** a new repository by using the [Community Template repository](https://github.com/MobiFlight/CommunityTemplate)
 Clone the repository and open it in PlatformIO.
 * Open a Windows shell
 * cd to the parent directory for your project
@@ -42,7 +42,7 @@ Now is a good point to test your changes and toolchain. The existing firmware it
 ## Test with the MF Connector Client
 If your build succeeded, you can now try it with the MobiFlight Connector Client
 * Copy the contents of the Community folder under your [device] folder to a new directory in the MobiFlight Community directory. By default this foler is '''%LOCALAPPDATA%\MobiFlight\MobiFlight Connector\Community'''
-* Name the new folder [device] and copy the three directories: Firmawre, Device, Board under that new directory.
+* Name the new folder [device] and copy the three directories: Firmware, Device, Board under that new directory.
 * Start the MobiFlight client. Make sure your "bare" board is connected and there are no active Serial connections to the board.
 * The example below is on Version 10 of the MF client using a new Arduino Mega with no firmware or configuration
 
@@ -73,10 +73,10 @@ For each `[author]\_[device].device.json` a list item with `"Type": "[author]\_[
 
 # Implement your community firmware
 This is where the fun starts! You've gotten past all of the pre-requisites and connection configuration and you can now write code to implement your custom device.
-See configuration comments and hints in the files, especially the [device]_platformio.ini file. It is also a good idea to check how the examples are set up. The basic GNC255 community device supports an 256x128 OLED, so just one community class is supported. The community device for the FCU and EFIS display from KAV simulation supports five different classes, so it's a good example how to set up two ore more supported devices.
+See configuration comments and hints in the files, especially the [device]_platformio.ini file. It is also a good idea to check how the examples are set up. The basic GNC255 community device supports an 256x128 OLED, so just one community class is supported. The community device for the FCU and EFIS display from KAV simulation supports five different classes, so it's a good example how to set up two or more supported devices.
 
 ## File organization
-* All of your custom code should fall unther the [device] folder of your project. 
+* All of your custom code should fall under the [device] folder of your project. 
 * You will mainly be editing the [device].cpp and [device].h files after initial configuration.
 * If your project will only support a single hardware type (e.g. RP2040) you may safely delete the other [env.*] sections of your [device]_platformio.ini file, all the extra board.json files, and any unnecessary files in the Community/firmware folder.
 * Do NOT edit the base platformio.ini file in the root directory.
@@ -135,7 +135,7 @@ End users can add your custom device to their configuration the usual way: Flash
 To include your board config in flash:
 * Uncomment the ```-DHAS_CONFIG_IN_FLASH``` line in the [device]\_platformio.ini file
 * Edit the [device]/MFCustomDevicesConfig.h file to include your complete configuration, one device per line replacing the example configuration in the template file.
-* :star:The easy way to get your configuration strings is to configure your device using the MF Connector client, and then getting the necesary strings using the ```12;``` command from a serial terminal. This will give you something like: ```10,17.LC2Chrono.0|1|2|3|4|5..CC's LC2Chrono:1.6.modeBtn:14.11.7.8.9.10.2.Multiplexer:;``` From this, you would drop the leading '10,' (response type) and replace the vertical bars '|' with '.' and take out some of the extra delimiters. So the resulting file would be:
+* :star:The easy way to get your configuration strings is to configure your device using the MF Connector client, and then getting the necesary strings using the ```12;``` command from a serial terminal. This will give you something like: ```10,17.LC2Chrono.0|1|2|3|4|5..CC's LC2Chrono:1.6.modeBtn:14.11.7.8.9.10.2.Multiplexer:;``` From this, you would drop the leading '10,' (response type) and replace the vertical bars '|' with '.' and take out some of the extra . delimiters. So the resulting file would be:
 ```
 const char CustomDeviceConfig[] PROGMEM =
 {
@@ -151,7 +151,7 @@ const char CustomDeviceConfig[] PROGMEM =
 # Debugging/Testing
 * Many people find it easier to work out details of screen configuration and core logic in a simple "hello world" project before moving it to the MF Community template.
 * You can open a serial port to directly test your device. (115200 baud) The communication protocol is CmdMessenger. The command ids are in the ./src/src/commandmessenger.h file. The general format of the command is ```command_id,command_args;``` No CR/LF.
-* To send a message with id 3 with value 4.5 to your first added custom device, from a serial terminal enter: ```32,0,3,4.5;``` Note that it will not echo. Use a semi-colon, not an enter to terminate the command. Other useful comands are ```5;``` quick 'are you alive?' test. ```9;``` get info on board. ```12``` get board config string.
+* To send a message with id 3 with value 4.5 to your first added custom device, from a serial terminal enter: ```32,0,3,4.5;``` Note that it will not echo. Use a semi-colon, not an enter to terminate the command. Other useful comands are ```5;``` quick 'are you alive?' test. ```9;``` get info on board. ```12;``` get board config string.
 * Be careful with Serial.printf() debugging. Random string output to the serial port can confuse the MF client. You can use them in combination with serial debugging described above, but you will need to disable Serial.print statements before resuming testing with the MF client.
 * MF Client expects a certain response from your board when it boots. If you have long delays at startup or extraneous serial output this step may fail and your board will not be recognized.
 * Instead of using Serial.printf, you can use: ```cmdMessenger.sendCmd(kDebug, F("Unexpected error! Debug message"));``` and make sure to turn up logging level in the MF Client to "debug"
